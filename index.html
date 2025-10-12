@@ -20,13 +20,25 @@
   </style>
 </head>
 <body>
-  <h1>My C# Code Example</h1>
+  <h1>C# Code Example</h1>
   <pre><code class="language-csharp">
 using System;
+using System.IO;
 
-class Program {
-    static void Main() {
-        Console.WriteLine("Hello, user!");
+class Program
+{
+    static void Main()
+    {
+        // [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\program.zip")) > "C:\encoded.txt"
+        // [IO.File]::WriteAllBytes("C:\program_decoded.zip", [Convert]::FromBase64String([IO.File]::ReadAllText("C:\encoded.txt")))
+        string base64Path = @"C:\encoded.txt";
+        string outputZipPath = @"C:\program_decoded.zip";
+
+        string base64 = File.ReadAllText(base64Path);
+        byte[] zipBytes = Convert.FromBase64String(base64);
+
+        File.WriteAllBytes(outputZipPath, zipBytes);
+        Console.WriteLine("Base64 decoded back to ZIP.");
     }
 }
   </code></pre>
