@@ -17,35 +17,49 @@
       border-radius: 5px;
       overflow-x: auto;
     }
+    #loading {
+      color: #999;
+    }
   </style>
 </head>
 <body>
   <h1>C# Code Example</h1>
-  <pre><code class="language-csharp">
+  <div id="loading">Loading base64Zip content…</div>
+  <pre><code id="codeBlock" class="language-csharp"></code></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+  <script>
+    fetch('base64Zip')
+      .then(response => response.text())
+      .then(base64 => {
+        const code = `
 using System;
 using System.IO;
 
 class Program
 {
-    private static string base64Zip = @"UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==";
+    private static string base64Zip = @"
+${base64.trim()}
+";
 
     static void Main()
     {
-        // [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\program.zip")) > "C:\encoded.txt"
-        // [IO.File]::WriteAllBytes("C:\program_decoded.zip", [Convert]::FromBase64String([IO.File]::ReadAllText("C:\encoded.txt")))
-        string base64Path = @"C:\encoded.txt";
-        string outputZipPath = @"C:\program_decoded.zip";
-
-        string base64 = File.ReadAllText(base64Path);
-        byte[] zipBytes = Convert.FromBase64String(base64); //Convert.FromBase64String(base64Zip.Trim());
-
-        File.WriteAllBytes(outputZipPath, zipBytes);
+        byte[] zipBytes = Convert.FromBase64String(base64Zip.Trim());
+        File.WriteAllBytes(@"C:\\program_decoded.zip", zipBytes);
         Console.WriteLine("Base64 decoded back to ZIP.");
     }
 }
-  </code></pre>
+        `.trim();
 
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+        document.getElementById('codeBlock').textContent = code;
+        document.getElementById('loading').style.display = 'none';
+        Prism.highlightAll();
+      })
+      .catch(err => {
+        document.getElementById('loading').textContent = '❌ Failed to load base64Zip.txt';
+        console.error(err);
+      });
+  </script>
 </body>
 </html>
