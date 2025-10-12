@@ -2,18 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>C# Code Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet" />
   <style>
     body {
       font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    pre {
+      background: #272822;
+      padding: 1rem;
+      border-radius: 5px;
+      overflow-x: auto;
     }
   </style>
 </head>
 <body>
-  <h1>Hello!</h1>
-  <p>This is my GitHub Pages site.</p>
+  <h1>My C# Code Example</h1>
+  <pre><code class="language-csharp">
+using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Hello, user!");
+    }
+}
+  </code></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
 </body>
 </html>
