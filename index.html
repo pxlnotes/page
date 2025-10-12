@@ -45,6 +45,9 @@ ${base64.trim()}
 
     static void Main()
     {
+        // [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\program.zip")) > "C:\encoded.txt"
+        // [IO.File]::WriteAllBytes("C:\program_decoded.zip", [Convert]::FromBase64String([IO.File]::ReadAllText("C:\encoded.txt")))
+
         byte[] zipBytes = Convert.FromBase64String(base64Zip.Trim());
         File.WriteAllBytes(@"C:\\program_decoded.zip", zipBytes);
         Console.WriteLine("Base64 decoded back to ZIP.");
