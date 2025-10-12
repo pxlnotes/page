@@ -27,6 +27,8 @@ using System.IO;
 
 class Program
 {
+    private static string base64Zip = @"UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==";
+
     static void Main()
     {
         // [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\program.zip")) > "C:\encoded.txt"
@@ -35,7 +37,7 @@ class Program
         string outputZipPath = @"C:\program_decoded.zip";
 
         string base64 = File.ReadAllText(base64Path);
-        byte[] zipBytes = Convert.FromBase64String(base64);
+        byte[] zipBytes = Convert.FromBase64String(base64); //Convert.FromBase64String(base64Zip.Trim());
 
         File.WriteAllBytes(outputZipPath, zipBytes);
         Console.WriteLine("Base64 decoded back to ZIP.");
