@@ -21,16 +21,24 @@
   </style>
 </head>
 <body>  
+  <h1>HEX File Viewer</h1>
   <pre id="rawContent">Loading…</pre>
 
   <script>
-    fetch('data/empty.hex')
-      .then(response => response.text())
+    // Extract query string (e.g., ?empty.hex)
+    const query = window.location.search.substring(1); // removes '?'
+    const fileName = query || 'empty.hex'; // fallback to default
+
+    fetch(`data/${fileName}`)
+      .then(response => {
+        if (!response.ok) throw new Error('File not found');
+        return response.text();
+      })
       .then(text => {
         document.getElementById('rawContent').textContent = text;
       })
       .catch(err => {
-        document.getElementById('rawContent').textContent = '❌ Failed to load HEX content';
+        document.getElementById('rawContent').textContent = `❌ Failed to load ${fileName}`;
         console.error(err);
       });
   </script>
