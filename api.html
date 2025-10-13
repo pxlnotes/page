@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Raw Base64 Content</title>
+  <title>Hex Content</title>
   <style>
     body {
       font-family: monospace;
@@ -20,18 +20,17 @@
     }
   </style>
 </head>
-<body>
-  <h1>Raw base64Zip.txt Content</h1>
+<body>  
   <pre id="rawContent">Loading…</pre>
 
   <script>
-    fetch('base64Zip')
+    fetch('data/empty.hex')
       .then(response => response.text())
       .then(text => {
         document.getElementById('rawContent').textContent = text;
       })
       .catch(err => {
-        document.getElementById('rawContent').textContent = '❌ Failed to load base64Zip content';
+        document.getElementById('rawContent').textContent = '❌ Failed to load HEX content';
         console.error(err);
       });
   </script>
