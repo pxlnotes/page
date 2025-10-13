@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Raw Base64 Content</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 2rem;
+      background: #fff;
+      color: #333;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #eee;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Raw base64Zip.txt Content</h1>
+  <pre id="rawContent">Loading…</pre>
+
+  <script>
+    fetch('data/base64zip.txt')
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('rawContent').textContent = text;
+      })
+      .catch(err => {
+        document.getElementById('rawContent').textContent = '❌ Failed to load base64Zip content';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
