@@ -18,40 +18,69 @@
       padding: 1rem;
       border-radius: 5px;
     }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li a {
+      text-decoration: none;
+      color: #0366d6;
+    }
+    li a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <pre id="rawContent">Loading…</pre>
 
   <script>
+    // Extract query or path
     const path = window.location.pathname;
+    const query = window.location.search.substring(1); // removes '?'
+    const fileName = query || 'empty.hex'; // fallback to default
 
+    const rawContent = document.getElementById('rawContent');
+
+    // 🆕 Handle /get route
     if (path.endsWith('/get')) {
-      // New logic: list all .hex files from /api/get
-      fetch('/api/get')
-        .then(res => res.json())
+      // Fetch an index file listing all files in /data
+      fetch('data/index.json')
+        .then(response => {
+          if (!response.ok) throw new Error('Index not found');
+          return response.json();
+        })
         .then(files => {
-          document.getElementById('rawContent').textContent = files.join('\n');
+          // Clear <pre> and render a file list
+          rawContent.replaceWith(document.createElement('div'));
+          const div = document.body.lastElementChild;
+          const ul = document.createElement('ul');
+          files.forEach(file => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `?${file}`;
+            a.textContent = file;
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+          div.appendChild(ul);
         })
         .catch(err => {
-          document.getElementById('rawContent').textContent = '❌ Failed to load file list';
+          rawContent.textContent = '❌ Failed to load file list';
           console.error(err);
         });
     } else {
-      // Original logic: load specific .hex file from query string
-      const query = window.location.search.substring(1); // removes '?'
-      const fileName = query || 'empty.hex'; // fallback to default
-
+      // Default behavior — fetch a single file
       fetch(`data/${fileName}`)
         .then(response => {
           if (!response.ok) throw new Error('File not found');
           return response.text();
         })
         .then(text => {
-          document.getElementById('rawContent').textContent = text;
+          rawContent.textContent = text;
         })
         .catch(err => {
-          document.getElementById('rawContent').textContent = `❌ Failed to load ${fileName}`;
+          rawContent.textContent = `❌ Failed to load ${fileName}`;
           console.error(err);
         });
     }
