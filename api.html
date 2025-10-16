@@ -19,14 +19,17 @@
       border-radius: 5px;
     }
     ul {
-      list-style-type: none;
+      list-style: none;
       padding: 0;
     }
-    li a {
-      text-decoration: none;
-      color: #0366d6;
+    li {
+      margin: 0.25rem 0;
     }
-    li a:hover {
+    a {
+      text-decoration: none;
+      color: #0074d9;
+    }
+    a:hover {
       text-decoration: underline;
     }
   </style>
@@ -35,27 +38,22 @@
   <pre id="rawContent">Loading…</pre>
 
   <script>
-    // Extract query or path
+    const rawContent = document.getElementById('rawContent');
     const path = window.location.pathname;
     const query = window.location.search.substring(1); // removes '?'
-    const fileName = query || 'empty.hex'; // fallback to default
 
-    const rawContent = document.getElementById('rawContent');
-
-    // 🆕 Handle /get route
+    // If the user is at /get (like /page/api/get)
     if (path.endsWith('/get')) {
-      // Fetch an index file listing all files in /data
       fetch('data/index.json')
         .then(response => {
           if (!response.ok) throw new Error('Index not found');
           return response.json();
         })
         .then(files => {
-          // Clear <pre> and render a file list
-          rawContent.replaceWith(document.createElement('div'));
-          const div = document.body.lastElementChild;
+          const hexFiles = files.filter(f => f.endsWith('.hex'));
+          const div = document.createElement('div');
           const ul = document.createElement('ul');
-          files.forEach(file => {
+          hexFiles.forEach(file => {
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.href = `?${file}`;
@@ -64,13 +62,16 @@
             ul.appendChild(li);
           });
           div.appendChild(ul);
+          rawContent.replaceWith(div);
         })
         .catch(err => {
           rawContent.textContent = '❌ Failed to load file list';
           console.error(err);
         });
-    } else {
-      // Default behavior — fetch a single file
+    } 
+    // Otherwise, show a single file
+    else {
+      const fileName = query || 'empty.hex';
       fetch(`data/${fileName}`)
         .then(response => {
           if (!response.ok) throw new Error('File not found');
