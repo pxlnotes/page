@@ -25,9 +25,9 @@
 
   <script>
     const rawContent = document.getElementById('rawContent');
-    const fileName = 'index.json'; // always load this
+    const fileName = '../data/index.json'; // relative to /page/api/
 
-    fetch(`./data/${fileName}`)
+    fetch(fileName)
       .then(response => {
         if (!response.ok) throw new Error('File not found');
         return response.text();
