@@ -18,16 +18,9 @@
       padding: 1rem;
       border-radius: 5px;
     }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      margin: 0.25rem 0;
-    }
     a {
-      text-decoration: none;
       color: #0074d9;
+      text-decoration: none;
     }
     a:hover {
       text-decoration: underline;
@@ -41,14 +34,18 @@
     const rawContent = document.getElementById('rawContent');
     const path = window.location.pathname;
     const query = window.location.search.substring(1); // removes '?'
-    console.log("path:", path, "query:", query);
+    const hash = window.location.hash.substring(1);    // removes '#'
 
-    // Detect if user opened /get (works for .../page/api/get)
-    if (path.endsWith('/get')) {
-      console.log("Fetching index.json...");
-      const fileName = 'index.json';
-      console.log("Fetching file:", fileName);
-      fetch(`./data/${fileName}`)
+    console.log("path:", path, "query:", query, "hash:", hash);
+
+    // Determine mode
+    const mode = hash || path.split('/').pop(); // last part of path (in case you use /page/api/anything)
+    const fileName = query || 'empty.hex';
+
+    if (mode === 'get' || hash === 'get') {
+      // Hash route version: https://pxlnotes.github.io/page/api#get
+      console.log("Detected 'get' route — loading index.json");
+      fetch(`./data/index.json`)
         .then(response => {
           if (!response.ok) throw new Error('File not found');
           return response.text();
@@ -57,12 +54,11 @@
           rawContent.textContent = text;
         })
         .catch(err => {
-          rawContent.textContent = `❌ Failed to load ${fileName}`;
+          rawContent.textContent = `❌ Failed to load index.json`;
           console.error(err);
         });
     } else {
-      // Default: load one file
-      const fileName = query || 'empty.hex';
+      // Default query/file version
       console.log("Fetching file:", fileName);
       fetch(`./data/${fileName}`)
         .then(response => {
