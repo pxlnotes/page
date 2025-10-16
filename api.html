@@ -41,38 +41,47 @@
     const rawContent = document.getElementById('rawContent');
     const path = window.location.pathname;
     const query = window.location.search.substring(1); // removes '?'
+    console.log("path:", path, "query:", query);
 
-    // If the user is at /get (like /page/api/get)
-    if (path.endsWith('/get')) {
-      fetch('data/index.json')
+    // Detect if user opened /get (works for .../page/api/get)
+    if (path.endsWith('/get') || path.endsWith('/get/')) {
+      console.log("Fetching index.json...");
+      fetch('./data/index.json')
         .then(response => {
-          if (!response.ok) throw new Error('Index not found');
+          if (!response.ok) throw new Error('index.json not found');
           return response.json();
         })
         .then(files => {
+          console.log("Loaded index.json:", files);
           const hexFiles = files.filter(f => f.endsWith('.hex'));
-          const div = document.createElement('div');
+          const listContainer = document.createElement('div');
           const ul = document.createElement('ul');
-          hexFiles.forEach(file => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `?${file}`;
-            a.textContent = file;
-            li.appendChild(a);
-            ul.appendChild(li);
-          });
-          div.appendChild(ul);
-          rawContent.replaceWith(div);
+
+          if (hexFiles.length === 0) {
+            listContainer.textContent = 'No .hex files found in data/index.json';
+          } else {
+            hexFiles.forEach(file => {
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = `?${file}`;
+              a.textContent = file;
+              li.appendChild(a);
+              ul.appendChild(li);
+            });
+            listContainer.appendChild(ul);
+          }
+
+          rawContent.replaceWith(listContainer);
         })
         .catch(err => {
-          rawContent.textContent = '❌ Failed to load file list';
+          rawContent.textContent = '❌ Failed to load file list (data/index.json missing)';
           console.error(err);
         });
-    } 
-    // Otherwise, show a single file
-    else {
+    } else {
+      // Default: load one file
       const fileName = query || 'empty.hex';
-      fetch(`data/${fileName}`)
+      console.log("Fetching file:", fileName);
+      fetch(`./data/${fileName}`)
         .then(response => {
           if (!response.ok) throw new Error('File not found');
           return response.text();
