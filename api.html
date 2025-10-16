@@ -24,33 +24,37 @@
   <pre id="rawContent">Loading…</pre>
 
   <script>
-  const query = window.location.search.substring(1); // removes '?'
+    const path = window.location.pathname;
 
-  if (query === 'api/get') {
-    fetch('/api/get')
-      .then(res => res.json())
-      .then(files => {
-        document.getElementById('rawContent').textContent = files.join('\n');
-      })
-      .catch(err => {
-        document.getElementById('rawContent').textContent = '❌ Failed to load file list';
-        console.error(err);
-      });
-  } else {
-    const fileName = query || 'empty.hex';
-    fetch(`data/${fileName}`)
-      .then(response => {
-        if (!response.ok) throw new Error('File not found');
-        return response.text();
-      })
-      .then(text => {
-        document.getElementById('rawContent').textContent = text;
-      })
-      .catch(err => {
-        document.getElementById('rawContent').textContent = `❌ Failed to load ${fileName}`;
-        console.error(err);
-      });
-  }
-</script>
+    if (path.endsWith('/get')) {
+      // New logic: list all .hex files from /api/get
+      fetch('/api/get')
+        .then(res => res.json())
+        .then(files => {
+          document.getElementById('rawContent').textContent = files.join('\n');
+        })
+        .catch(err => {
+          document.getElementById('rawContent').textContent = '❌ Failed to load file list';
+          console.error(err);
+        });
+    } else {
+      // Original logic: load specific .hex file from query string
+      const query = window.location.search.substring(1); // removes '?'
+      const fileName = query || 'empty.hex'; // fallback to default
+
+      fetch(`data/${fileName}`)
+        .then(response => {
+          if (!response.ok) throw new Error('File not found');
+          return response.text();
+        })
+        .then(text => {
+          document.getElementById('rawContent').textContent = text;
+        })
+        .catch(err => {
+          document.getElementById('rawContent').textContent = `❌ Failed to load ${fileName}`;
+          console.error(err);
+        });
+    }
+  </script>
 </body>
 </html>
