@@ -24,10 +24,20 @@
   <pre id="rawContent">Loading…</pre>
 
   <script>
-    // Extract query string (e.g., ?empty.hex)
-    const query = window.location.search.substring(1); // removes '?'
-    const fileName = query || 'empty.hex'; // fallback to default
+  const query = window.location.search.substring(1); // removes '?'
 
+  if (query === 'api/get') {
+    fetch('/api/get')
+      .then(res => res.json())
+      .then(files => {
+        document.getElementById('rawContent').textContent = files.join('\n');
+      })
+      .catch(err => {
+        document.getElementById('rawContent').textContent = '❌ Failed to load file list';
+        console.error(err);
+      });
+  } else {
+    const fileName = query || 'empty.hex';
     fetch(`data/${fileName}`)
       .then(response => {
         if (!response.ok) throw new Error('File not found');
@@ -40,6 +50,7 @@
         document.getElementById('rawContent').textContent = `❌ Failed to load ${fileName}`;
         console.error(err);
       });
-  </script>
+  }
+</script>
 </body>
 </html>
