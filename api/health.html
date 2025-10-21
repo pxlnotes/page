@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Content - Health Check</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 2rem;
+      background: #fff;
+      color: #333;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #eee;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <pre id="rawContent">Loading…</pre>
+
+  <script>
+    const rawContent = document.getElementById('rawContent');
+    const apiUrl = 'http://135.225.85.246/api/v2/relayserver-health';
+
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      })
+      .then(text => {
+        rawContent.textContent = text;
+      })
+      .catch(err => {
+        rawContent.textContent = `❌ Failed to load ${apiUrl}`;
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
