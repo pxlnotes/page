@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HEX File Upload</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        #upload-box {
+            width: 400px;
+            padding: 30px;
+            border: 3px dashed #777;
+            border-radius: 15px;
+            text-align: center;
+            background: #fff;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        #upload-box.dragover {
+            border-color: #0099ff;
+            background: #eefaff;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #upload-button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #0099ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="upload-box">
+    <h3>Upload .hex File</h3>
+    <p>Drag & Drop a file here<br>or click below</p>
+
+    <input type="file" id="file-input" accept=".hex">
+    <button id="upload-button">Choose File</button>
+
+    <p id="status"></p>
+</div>
+
+<script>
+    let apiUrl = null;
+
+    // Load API URL from config.json
+    async function loadConfig() {
+        try {
+            const response = await fetch("config.json");
+            const config = await response.json();
+            apiUrl = config.apiUrl;
+            console.log("API loaded:", apiUrl);
+        } catch (err) {
+            document.getElementById("status").innerHTML = "❌ Failed to load config.json";
+        }
+    }
+
+    // Initialize
+    loadConfig();
+
+    const uploadBox = document.getElementById("upload-box");
+    const fileInput = document.getElementById("file-input");
+    const status = document.getElementById("status");
+    const uploadButton = document.getElementById("upload-button");
+
+    uploadBox.addEventListener("dragover", e => {
+        e.preventDefault();
+        uploadBox.classList.add("dragover");
+    });
+
+    uploadBox.addEventListener("dragleave", () => {
+        uploadBox.classList.remove("dragover");
+    });
+
+    uploadBox.addEventListener("drop", e => {
+        e.preventDefault();
+        uploadBox.classList.remove("dragover");
+
+        const file = e.dataTransfer.files[0];
+        handleFile(file);
+    });
+
+    uploadButton.onclick = () => fileInput.click();
+
+    fileInput.onchange = () => {
+        const file = fileInput.files[0];
+        handleFile(file);
+    };
+
+    function handleFile(file) {
+        if (!file) return;
+
+        if (!file.name.endsWith(".hex")) {
+            status.innerHTML = "❌ Only .hex files allowed!";
+            return;
+        }
+
+        uploadFile(file);
+    }
+
+    async function uploadFile(file) {
+        if (!apiUrl) {
+            status.innerHTML = "❌ API config not loaded!";
+            return;
+        }
+
+        status.innerHTML = "Uploading...";
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                status.innerHTML = "✅ File uploaded successfully!";
+            } else {
+                status.innerHTML = "❌ Upload failed. Status: " + response.status;
+            }
+
+        } catch (e) {
+            status.innerHTML = "❌ Error: " + e.message;
+        }
+    }
+</script>
+
+</body>
+</html>
